@@ -1,35 +1,59 @@
 name: Build EPUB from Markdown
-
 on:
   push:
     branches:
       - master
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Install pandoc
         run: sudo apt update && sudo apt install -y pandoc
-
-      - name: Convert Markdown to EPUB 
+      - name: Convert Markdown to EPUB
         run: |
-          mkdir -p output
+          mkdir -p dist
           pandoc \
             $(find src -name "*.md" | grep frontend | sort) \
             --metadata-file=metadata.yml \
             --epub-cover-image="src/assets/icon.png" \
             --epub-embed-font="src/assets/SourceHanSansCN-Regular.otf" \
             --standalone \
-            -o output/前端面试题库.epub
-
+            -o dist/前端面试题库.epub
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: epub-book
-          path: output/前端面试题库.epub
+          name: frontend-inter-view-epub
+          path: dist/前端面试题库.epub
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      packages: write
+    steps:
+      - name: Download built EPUB
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-inter-view-epub
+          path: dist
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Frontend Interview Book v${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload to GitHub Packages
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/前端面试题库.epub
+          asset_name: 前端面试题库_v${{ github.run_number }}.epub
+          asset_content_type: application/epub+zip
