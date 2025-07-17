@@ -19,6 +19,7 @@ jobs:
             $(find src/frontend -name "*.md" | sort) \
             --metadata-file=metadata.yml \
             --epub-cover-image="src/assets/icon.png" \
+            --css="src/assets/style.css" \
             --epub-embed-font="src/assets/SourceHanSansCN-Regular.otf" \
             --standalone \
             -o dist/前端面试题库.epub
