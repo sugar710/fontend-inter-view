@@ -16,7 +16,7 @@ jobs:
         run: |
           mkdir -p dist
           pandoc \
-            $(find src -name "*.md" | grep frontend | sort) \
+            $(find src/frontend -name "*.md" | sort) \
             --metadata-file=metadata.yml \
             --epub-cover-image="src/assets/icon.png" \
             --epub-embed-font="src/assets/SourceHanSansCN-Regular.otf" \
@@ -40,7 +40,7 @@ jobs:
           path: dist
       - name: Create release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
