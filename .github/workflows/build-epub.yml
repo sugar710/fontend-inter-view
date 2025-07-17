@@ -10,12 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    setps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install pandoc
-        run: sudo apt update && sudo install -y pandoc
+        run: sudo apt update && sudo apt install -y pandoc
 
       - name: Convert Markdown to EPUB 
         run: |
