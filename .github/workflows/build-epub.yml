@@ -1,0 +1,35 @@
+name: Build EPUB from Markdown
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    setps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pandoc
+        run: sudo apt update && sudo install -y pandoc
+
+      - name: Convert Markdown to EPUB 
+        run: |
+          mkdir -p output
+          pandoc \
+            $(find src -name "*.md" | grep frontend | sort) \
+            --metadata-file=metadata.yml \
+            --epub-cover-image="src/assets/icon.png" \
+            --epub-embed-font="src/assets/SourceHanSansCN-Regular.otf" \
+            --standalone \
+            -o output/前端面试题库.epub
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: epub-book
+          path: output/前端面试题库.epub
