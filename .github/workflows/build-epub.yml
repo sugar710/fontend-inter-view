@@ -45,8 +45,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ github.run_number }}
-          release_name: Frontend Interview Book v${{ github.run_number }}
+          tag_name: v1.0.${{ github.run_number }}
+          release_name: v1.0.${{ github.run_number }}
           draft: false
           prerelease: false
       - name: Upload to GitHub Packages
@@ -56,5 +56,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/前端面试题库.epub
-          asset_name: 前端面试题库_v${{ github.run_number }}.epub
+          asset_name: frontend-interview.epub
           asset_content_type: application/epub+zip
