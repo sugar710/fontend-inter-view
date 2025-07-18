@@ -40,3 +40,30 @@ function debounce(func, delay) {
   };
 }
 ```
+
+### Q. 实现一个retry函数, retry(fn, times = 1, delay = 0)
+
+```js
+function retry(fn, times = 1, delay = 0) {
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  return new Promise((resolve, reject) => {
+
+    async function runner(remaining) {
+      try {
+        resolve(await fn());
+      } catch(err) {
+        if (remaining <=1) {
+          reject(err);
+        } else {
+          delay > 0 && await sleep(delay);
+          runner(remaining - 1);
+        }
+      }
+    }
+    
+    runner(times);
+  });
+}
+```
